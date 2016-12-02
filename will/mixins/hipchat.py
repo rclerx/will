@@ -56,7 +56,7 @@ class HipChatMixin(object):
             # https://www.hipchat.com/docs/apiv2/method/send_room_notification
             url = ROOM_NOTIFICATION_URL % {"server": settings.HIPCHAT_SERVER,
                                            "room_id": room_id,
-                                           "token": settings.V2_TOKEN}
+                                           "token": settings.V2_TOKEN_NOTIFIER}
             data = {
                 "message": message_body,
                 "message_format": format,
@@ -85,7 +85,7 @@ class HipChatMixin(object):
     def get_hipchat_user(self, user_id, q=None):
         url = USER_DETAILS_URL % {"server": settings.HIPCHAT_SERVER,
                                   "user_id": user_id,
-                                  "token": settings.V2_TOKEN}
+                                  "token": settings.V2_TOKEN_VIEWGROUP}
         r = requests.get(url, **settings.REQUESTS_OPTIONS)
         if q:
             q.put(r.json())
