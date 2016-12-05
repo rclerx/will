@@ -399,6 +399,7 @@ To set your %(name)s:
                 for root, dirs, files in os.walk(plugin_root, topdown=False):
                     for f in files:
                         if f[-3:] == ".py" and f != "__init__.py":
+                            puts("Bootstrapping plugin " + f)
                             try:
                                 module_path = os.path.join(root, f)
                                 path_components = os.path.split(module_path)
