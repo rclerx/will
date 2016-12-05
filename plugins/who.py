@@ -28,4 +28,4 @@ class WhoPlugin(WillPlugin):
 
     @respond_to("^.")
     def other(self, message):
-        logger.info("I heard '" + str(message['body']) + "'")
+        logger.info("I heard something '" + str(message['body']) + "'")
