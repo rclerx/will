@@ -5,6 +5,7 @@ import logging
 import requests
 from will import settings
 
+
 logger = logging.getLogger(__name__)
 
 
