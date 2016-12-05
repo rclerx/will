@@ -19,7 +19,7 @@ class WhoPlugin(WillPlugin):
     @respond_to("^http|: http")
     def pic(self, message):
         """SDG!"""
-        pattern = re.compile("(http.*(jpg|png|gif))")
+        pattern = re.compile("(http.*(jpg|png|gif))", re.IGNORECASE)
         matches = pattern.search(message['body'])
         if matches and matches.group():
             payload = {"image": matches.group()}
