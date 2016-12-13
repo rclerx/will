@@ -27,7 +27,7 @@ class HipChatMixin(object):
             # https://www.hipchat.com/docs/apiv2/method/private_message_user
             url = PRIVATE_MESSAGE_URL % {"server": settings.HIPCHAT_SERVER,
                                          "user_id": user_id,
-                                         "token": settings.V2_TOKEN}
+                                         "token": settings.V2_TOKEN_PRIVATE_MESSAGER}
             data = {
                 "message": message_body,
                 "message_format": format,

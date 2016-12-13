@@ -11,14 +11,11 @@ logger = logging.getLogger(__name__)
 
 class WhoPlugin(WillPlugin):
 
-    @respond_to("who are you")
-    def say_bonjour_will(self, message):
-        """who are you: name and serial number"""
-        self.reply(message, "Hello. I am Baymax, your personal healthcare companion. On a scale of one to ten, how would you rate your pain?")
+    """SDG!"""
 
     @respond_to("^http|: http")
     def pic(self, message):
-        """SDG!"""
+        """Send me a picture with @max http://my.net/pic.jpg or gif or png. Or send me a private message."""
         pattern = re.compile("(http.*(jpg|png|gif))", re.IGNORECASE)
         matches = pattern.search(message['body'])
         if matches and matches.group():
@@ -29,4 +26,4 @@ class WhoPlugin(WillPlugin):
 
     @respond_to("^.")
     def other(self, message):
-        logger.info("I heard something '" + str(message['body']) + "'")
+        logger.info("I heard something ... '" + str(message['body']) + "'")
