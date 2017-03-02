@@ -142,10 +142,12 @@ class WillBot(EmailMixin, WillXMPPClientMixin, StorageMixin, ScheduleMixin,
             except (KeyboardInterrupt, SystemExit):
                 scheduler_thread.terminate()
                 flask_thread.terminate()
+                websockets_thread.terminate()
                 xmpp_thread.terminate()
                 print '\n\nReceived keyboard interrupt, quitting threads.'
                 while (scheduler_thread.is_alive() or
                        flask_thread.is_alive() or
+                       websockets_thread.is_alive() or
                        xmpp_thread.is_alive()):
                         sys.stdout.write(".")
                         sys.stdout.flush()
