@@ -21,6 +21,7 @@ from mixins import ScheduleMixin, StorageMixin, ErrorMixin, HipChatMixin,\
 from scheduler import Scheduler
 import settings
 from utils import show_valid, error, warn, print_head
+from will.webapp import bootstrap_flask, bootstrap_websockets
 
 
 # Force UTF8
@@ -49,7 +50,7 @@ class WillBot(EmailMixin, WillXMPPClientMixin, StorageMixin, ScheduleMixin,
         if "plugin_dirs" in kwargs:
             warn("plugin_dirs is now depreciated")
 
-        log_level = getattr(settings, 'LOGLEVEL', logging.ERROR)
+        log_level = getattr(settings, 'LOGLEVEL', logging.INFO)
         logging.basicConfig(
             level=log_level,
             format='%(levelname)-8s %(message)s'
@@ -111,7 +112,9 @@ class WillBot(EmailMixin, WillXMPPClientMixin, StorageMixin, ScheduleMixin,
         # scheduler_thread.daemon = True
 
         # Bottle
-        bottle_thread = Process(target=self.bootstrap_bottle)
+        # bottle_thread = Process(target=self.bootstrap_bottle)
+        flask_thread = Process(target=bootstrap_flask)
+        websockets_thread = Process(target=bootstrap_websockets)
         # bottle_thread.daemon = True
 
         # XMPP Listener
@@ -123,7 +126,8 @@ class WillBot(EmailMixin, WillXMPPClientMixin, StorageMixin, ScheduleMixin,
                 # Start up threads.
                 xmpp_thread.start()
                 scheduler_thread.start()
-                bottle_thread.start()
+                flask_thread.start()
+                websockets_thread.start()
                 errors = self.get_startup_errors()
                 if len(errors) > 0:
                     default_room = self.get_room_from_name_or_id(settings.DEFAULT_ROOM)["room_id"]
@@ -137,11 +141,11 @@ class WillBot(EmailMixin, WillXMPPClientMixin, StorageMixin, ScheduleMixin,
                     time.sleep(100)
             except (KeyboardInterrupt, SystemExit):
                 scheduler_thread.terminate()
-                bottle_thread.terminate()
+                flask_thread.terminate()
                 xmpp_thread.terminate()
-                print '\n\nReceived keyboard interrupt, quitting threads.',
+                print '\n\nReceived keyboard interrupt, quitting threads.'
                 while (scheduler_thread.is_alive() or
-                       bottle_thread.is_alive() or
+                       flask_thread.is_alive() or
                        xmpp_thread.is_alive()):
                         sys.stdout.write(".")
                         sys.stdout.flush()

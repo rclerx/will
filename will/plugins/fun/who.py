@@ -24,6 +24,12 @@ class WhoPlugin(WillPlugin):
             r = requests.post(settings.GALLERY_URL, data=payload)
             self.reply(message, "Got it!")
 
+
+    @respond_to("^what's new")
+    def other(self, message):
+        logger.info("Now you can send me photos in a private message and I'll post them to the slideshow. (https://album-sse.herokuapp.com)")
+
+
     @respond_to("^.")
     def other(self, message):
         logger.info("I heard something ... '" + str(message['body']) + "'")

@@ -134,7 +134,7 @@ PLUGIN_BLACKLIST = [
 
 
 # Logging level
-# LOGLEVEL = "DEBUG"
+LOGLEVEL = "INFO"
 
 # Proxy settings
 # Use proxy to access hipchat servers
