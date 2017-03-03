@@ -22,17 +22,11 @@ import logging
 import gevent
 import settings
 
-
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format='%(levelname)-8s %(message)s'
-# )
 logger = logging.getLogger(__name__)
 
 url = urlparse.urlparse(os.environ.get('REDISCLOUD_URL'))
 r = redis.Redis(host=url.hostname, port=url.port, password=url.password)
 pubsub = redis.Redis(host=url.hostname, port=url.port, password=url.password)
-
 
 logger.info("type of pics is " + r.type("pics"))
 
