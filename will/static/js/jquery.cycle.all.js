@@ -593,6 +593,27 @@ function exposeAddSlide(opts, els) {
 		else
 			$s.hide(); // default behavior
 	};
+
+	opts.removeSlide = function(slideIndex) {
+		// Added mechanism for deleting slides.
+		if (opts.currSlide == slideIndex) {
+			console.log("Sorry, deleting the currSlide is not supported.")
+			return;
+		}
+
+		els.splice(slideIndex,1); // Delete the slide from the array
+		opts.slideCount = els.length;
+
+		opts.$cont.find('>:eq(' + slideIndex + ')').remove(); // Delete the slide from the DOM
+
+		if (slideIndex < opts.currSlide) {
+			opts.currSlide--;
+		}
+
+		if (slideIndex < opts.nextSlide) {
+			opts.nextSlide--;
+		}
+	};
 }
 
 // reset internal state; we do this on every pass in order to support multiple effects

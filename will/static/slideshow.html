@@ -165,22 +165,38 @@
             $('#slideshow').cycle('next');
         }
         if (e.which === 8) {
-            var deleted = $('div.mc-image').filter(function() {
-                return $(this).css('opacity') == '1';
-            });
+            console.log("Backspace");
 
-            deleted.each(function(e) {
-                var bg = $(this).css('background-image');
-                var img = bg.replace('url(','').replace(')','').replace(/\"/gi, "");
-                console.log("Deleting " + img);
+            // don't attempt a delete unless the Cycle plugin is fully initialized
+            if (SLIDESHOW && SLIDESHOW.removeSlide) {
 
-                $.ajax({
-                    url: "/pics",
-                    type: 'DELETE',
-                    data: { 'image': img }
+                // find a slide that is fully visible
+                var deleted = $('div.mc-image').filter(function() {
+                    return $(this).css('opacity') == '1';
                 });
-            });
-            deleted.remove();
+
+                // send a REST call to erase the url from Max's memory
+                deleted.each(function(e) {
+                    var bg = $(this).css('background-image');
+                    var img = bg.replace('url(','').replace(')','').replace(/\"/gi, "");
+                    console.log("Deleting " + img);
+
+                    $.ajax({
+                        url: "/pics",
+                        type: 'DELETE',
+                        data: { 'image': img }
+                    });
+                });
+
+                // if we found an active slide, advance to next, and then remove it from the slide show
+                if (deleted.size() > 0) {
+                    toRemove = SLIDESHOW.currSlide;
+                    $('#slideshow').cycle('next').after(function() {
+                        SLIDESHOW.removeSlide(toRemove);
+                    });
+                }
+
+            }
         }
 
     });
