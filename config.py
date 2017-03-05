@@ -101,6 +101,7 @@ PLUGIN_BLACKLIST = [
 # TEMPLATE_DIRS = [
 #   os.path.abspath("other_folder/templates")
 # ]
+TEMPLATE_DIRS = []
 
 
 # Access Control: Specify groups of users to be used in the acl=["admins","ceos"] parameter

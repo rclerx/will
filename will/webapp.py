@@ -11,7 +11,6 @@ from flask import jsonify
 from flask import send_from_directory
 from flask import request
 from flask import render_template
-from flask_sockets import Sockets
 from pprint import pformat
 import os
 import time
@@ -21,6 +20,8 @@ import redis
 import logging
 import gevent
 import settings
+
+keep_alive_url = "/keep-alive"
 
 logger = logging.getLogger(__name__)
 
@@ -51,63 +52,17 @@ elif r.type("pics") == "list":
 
 
 
-REDIS_CHAN = 'updates'
-
-class PicsBackend(object):
-    """Interface for registering and updating WebSocket clients."""
-
-    def __init__(self):
-        self.clients = list()
-        self.pubsub = pubsub.pubsub()
-        self.pubsub.subscribe(REDIS_CHAN)
-
-    def __iter_data(self):
-        for message in self.pubsub.listen():
-            data = message.get('data')
-            if message['type'] == 'message':
-                #app.logger.info(u'Got a new pic for clients: {}'.format(data))
-                logger.info(u'Got a new pic for clients: {}'.format(data))
-                yield data
-
-    def register(self, client):
-        """Register a WebSocket connection for Redis updates."""
-        #app.logger.info(u'Registering connected client')
-        logger.info(u'Registering connected client')
-        self.clients.append(client)
-
-    def send(self, client, data):
-        """Send given data to the registered client.
-        Automatically discards invalid connections."""
-        try:
-            client.send(data)
-        except Exception:
-            self.clients.remove(client)
-
-    def run(self):
-        """Listens for new messages in Redis, and sends them to clients."""
-        logger.info("Running subscriber")
-        for data in self.__iter_data():
-            for client in self.clients:
-                gevent.spawn(self.send, client, data)
-
-    def start(self):
-        """Maintains Redis subscription in the background."""
-        logger.info("Starting subscriber")
-        gevent.spawn(self.run)
-
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'), static_url_path='/static')
-sockets = Sockets(app)
-backend = PicsBackend()
-
+app.config['SECRET_KEY'] = 'TOPsecret!'
 
 def bootstrap_flask():
+    from will.sockets import get_socketio_app
     logger.info("Starting flask server on port " + settings.HTTPSERVER_PORT)
-    app.run(host="0.0.0.0", port=settings.HTTPSERVER_PORT)
-
-def bootstrap_websockets():
-    logger.info("Starting websockets")
-
+    socketioapp = get_socketio_app()
+    socketioapp.run(app, host="0.0.0.0", port=int(settings.HTTPSERVER_PORT))
+    # # Just Flask
+    # app.run(host="0.0.0.0", port=int(settings.HTTPSERVER_PORT))
 
 
 @app.route('/')
@@ -128,12 +83,13 @@ def pics():
 
 @app.route('/pics', methods=['POST'])
 def add_pic():
+    logger.info("POSTed pic")
     image = request.form['image']
     if image:
         logger.info("Publishing new image: " + image)
         logger.info(pformat(request.form))
         r.zadd("pics", image, time.time())
-        pubsub.publish(REDIS_CHAN, json.dumps(image))
+        pubsub.publish("updates", json.dumps(image))
         return jsonify([image])
     else:
         return jsonify([])
@@ -152,15 +108,14 @@ def reset_pics():
     r.delete("pics")
     return "Pics have been reset"
 
+@app.route('/keep-alive')
+def keep_alive():
+    return "I'm alive!"
 
-@sockets.route('/updates')
-def realtime_updates(ws):
-    """Sends outgoing pic updates, via `PicsBackend`."""
-    backend.register(ws)
 
-    while not ws.closed:
-        # Context switch while `ChatBackend.start` is running in the background.
-        gevent.sleep(0.1)
+@app.route("/ping")
+def ping():
+    return "PONG"
 
 
 if __name__ == "__main__":

@@ -59,10 +59,69 @@
 <script type="text/javascript" src="/static/js/jquery-2.0.3.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery.cycle.all.js" charset="utf-8"></script>
 <script type="text/javascript" src="/static/js/jquery.maximage.js" charset="utf-8"></script>
-<script type="text/javascript" src="/static/js/reconnecting-websocket.min.js"></script>
-<script type="text/javascript" src="/static/js/application.js"></script>
 
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
 <script type="text/javascript" charset="utf-8">
+
+    var SLIDESHOW;
+    var SECONDS_PER_SLIDE = 4;
+    var SECONDS_PER_NEW_SLIDE = 30;
+
+    function addSlide(imgurl) {
+        // Turn an img url into a workable slide.
+        var img = new Image(2048,1536);
+        img.src = imgurl;
+        $(img).bind('load', function() {
+
+            slide = '<div class="mc-image" title="' + img.alt + '" style="background-image:url(\'' + img.src + '\'); ' + img.style + ' data-href="'+ img.datahref +'"></div>';
+            SLIDESHOW.addSlide(slide);
+            SLIDESHOW.nextSlide = SLIDESHOW.slideCount - 1;
+            window.setTimeout(function() {
+                $('#slideshow').cycle('pause');
+                window.setTimeout(function() {
+                    $('#slideshow').cycle('resume');
+                }, SECONDS_PER_NEW_SLIDE*1000)
+            }, SECONDS_PER_SLIDE*1000);
+        });
+    }
+
+    $(document).ready(function() {
+        // Use a "/test" namespace.
+        // An application can open a connection on multiple namespaces, and
+        // Socket.IO will multiplex all those connections on a single
+        // physical channel. If you don't care about multiple channels, you
+        // can set the namespace to an empty string.
+        namespace = '/max';
+
+        // Connect to the Socket.IO server.
+        // The connection URL has the following format:
+        //     http[s]://<domain>:<port>[/<namespace>]
+        var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+
+        // Event handler for new connections.
+        // The callback function is invoked when a connection with the
+        // server is established.
+        socket.on('connect', function() {
+            socket.emit('my_event', {data: 'I\'m connected!'});
+        });
+
+        // Event handler for server sent data.
+        // The callback function is invoked whenever the server emits data
+        // to the client. The data is then displayed in the "Received"
+        // section of the page.
+        socket.on('my_response', function(msg) {
+            console.log('Socket received: ' + msg.data);
+        });
+
+        socket.on('my_picture', function(url) {
+            console.log('Picture received: ' + url);
+            if (SLIDESHOW && SLIDESHOW.addSlide) { // <-- important!
+                addSlide(url);
+            }
+        });
+
+    });
+
 
     $( document ).ready(function() {
 
@@ -72,15 +131,18 @@
                 console.log("Got a url: " + val);
                 var img = $("<img src='" + val + "' width='2048' height='1536'/>");
                 img.appendTo("#slideshow");
-
             });
 
             $(function(){
                 // Trigger maximage
                 jQuery('#slideshow').maximage({
                     cycleOptions: {
+
+                        timeout: SECONDS_PER_SLIDE * 1000,
+
                         before: function (curr, next, opts) {
-                            console.log("Transition from " + opts.currSlide + " to " + opts.nextSlide + " of " + opts.slideCount);
+                            SLIDESHOW = opts;
+                            //console.log("Transition from " + opts.currSlide + " to " + opts.nextSlide + " of " + opts.slideCount);
                         }
                     }
                 });
@@ -131,41 +193,6 @@
     });
 
 </script>
-
-
-<script type="text/javascript">
-
-    $(document).ready(function() {
-        var $top = $('#top');
-        var $document = $(document);
-        var timer = null;
-        var timerIsRunning = false;
-
-        $top.hide();
-
-        $('#menu').mousemove(function(e){
-            e.stopPropagation();
-        });
-        setTimeout(function() {
-            $document.mousemove(function(e) {
-                if($top.is(':hidden')) {
-                    $top.fadeIn();
-                } else {
-                    if(!timerIsRunning) {
-                        timerIsRunning = true;
-                        clearTimeout(timer);
-                        timer = setTimeout(function() { $top.fadeOut();  }, 3000);
-                        setTimeout(function() {timerIsRunning = false;}, 2000);
-                    }
-                }
-            });
-        }, 500);
-
-    });
-
-</script>
-</head>
-<body>
 
 </body>
 </html>
