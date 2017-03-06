@@ -1,1 +1,1 @@
-MODULE_DESCRIPTION = "It can't all be about work!"
+MODULE_DESCRIPTION = "Photos"

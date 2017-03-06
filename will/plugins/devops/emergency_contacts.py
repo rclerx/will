@@ -7,7 +7,7 @@ class EmergencyContactsPlugin(WillPlugin):
 
     @respond_to("^set my contact info to (?P<contact_info>.*)", multiline=True)
     def set_my_info(self, message, contact_info=""):
-        """set my contact info to ____: Set your emergency contact info."""
+        no_help = """set my contact info to ____: Set your emergency contact info."""
         contacts = self.load("contact_info", {})
         contacts[message.sender.nick] = {
             "info": contact_info,
@@ -18,7 +18,7 @@ class EmergencyContactsPlugin(WillPlugin):
 
     @respond_to("^contact info$")
     def respond_to_contact_info(self, message):
-        """contact info: Show everyone's emergency contact info."""
+        no_help = """contact info: Show everyone's emergency contact info."""
         contacts = self.load("contact_info", {})
         context = {
             "contacts": contacts,

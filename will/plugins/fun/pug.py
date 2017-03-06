@@ -6,7 +6,7 @@ from will.decorators import respond_to, periodic, hear, randomly, route, rendere
 
 class PugPlugin(WillPlugin):
 
-    @hear(r'\bpugs?\b')
+    @hear(r'\bpugs?\b|\bpug\b')
     def talk_on_pug(self, message):
         req = requests.get('http://pugme.herokuapp.com/random')
         if req.ok:
