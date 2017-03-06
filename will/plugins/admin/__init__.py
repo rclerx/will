@@ -1,1 +1,1 @@
-MODULE_DESCRIPTION = "Administrative actions"
+MODULE_DESCRIPTION = "Backup and restore"

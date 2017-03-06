@@ -50,6 +50,7 @@ class BackupPlugin(WillPlugin):
 
     @respond_to("^backup now")
     def take_a_backup(self, message):
+        """Take a backup by saying: backup now"""
         self.say("""No problem, I'll take a backup now.""", message=message)
         urls = self.redis.zrange("pics", 0, -1)
         self.say("/code " + str(pformat(urls)), message=message)
@@ -69,6 +70,7 @@ class BackupPlugin(WillPlugin):
 
     @respond_to("^backup list")
     def list_backups(self, message):
+        """Get a list of backups by saying: backup list"""
         self.say("""Sure, I'll get a list of the backups available.""", message=message)
         s3 = self._s3()
         results = s3.list_objects_v2(Bucket="max.bot")
@@ -80,6 +82,7 @@ class BackupPlugin(WillPlugin):
 
     @respond_to("^backup inspect (?P<snapshot>snapshot.*json)$")
     def inspect_snapshot(self, message, snapshot):
+        """Peek at the contents of a particular backup with: backup inspect _______"""
         self.say("""Let me pull up that backup for you""", message=message)
         s3 = self._s3()
         s3object = s3.get_object(Bucket="max.bot", Key=snapshot)
@@ -95,6 +98,7 @@ class BackupPlugin(WillPlugin):
 
     @respond_to("^restore (?P<snapshot>snapshot.*json)$")
     def restore_snapshot(self, message, snapshot):
+        """Restore a particular backup with: restore _______"""
         self.say("""Okay, I'm going to restore from """ + snapshot, message=message)
         s3 = self._s3()
         s3object = s3.get_object(Bucket="max.bot", Key=snapshot)
