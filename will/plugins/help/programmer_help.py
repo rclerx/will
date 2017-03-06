@@ -6,7 +6,7 @@ class ProgrammerHelpPlugin(WillPlugin):
 
     @respond_to("^programmer help$")
     def help(self, message):
-        """programmer help: Advanced programmer-y help."""
+        quiet_help = """programmer help: Advanced programmer-y help."""
         all_regexes = self.load("all_listener_regexes")
         help_text = "Here's everything I know how to listen to:"
         for r in all_regexes:

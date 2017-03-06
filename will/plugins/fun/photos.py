@@ -9,7 +9,7 @@ from will import settings
 logger = logging.getLogger(__name__)
 
 
-class WhoPlugin(WillPlugin):
+class PhotoPlugin(WillPlugin):
 
     """SDG!"""
 

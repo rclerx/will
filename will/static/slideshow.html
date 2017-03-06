@@ -203,6 +203,8 @@
             $('#slideshow').cycle('next');
         }
         if (e.which === 32) { // spacebar
+
+            // var paused = $('#slideshow').is( '.cycle-paused' );
             if (PAUSED == 'paused' ) {
                 console.log("Resumed");
                 $('#slideshow').cycle('resume').after().cycle('next');

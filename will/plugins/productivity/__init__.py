@@ -1,1 +1,1 @@
-MODULE_DESCRIPTION = "Productivity"
+HIDDEN_MODULE_DESCRIPTION = "Productivity"
