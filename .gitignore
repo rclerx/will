@@ -41,3 +41,7 @@ docs/.DS_Store
 
 # VIM swap files
 .*.sw[a-z]
+
+.python-version
+pip-selfcheck.json
+will.iml
