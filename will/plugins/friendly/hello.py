@@ -6,7 +6,7 @@ class HelloPlugin(WillPlugin):
 
     @respond_to("^hi$")
     def hi(self, message):
-        """hi: I know how to say hello!"""
+        hidden_help = """hi: I know how to say hello!"""
         self.reply(message, "hello!")
 
     @respond_to("^hello$")

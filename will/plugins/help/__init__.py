@@ -1,1 +1,1 @@
-MODULE_DESCRIPTION = "Help"
+MODULE_DESCRIPTION = "Help and the basics"

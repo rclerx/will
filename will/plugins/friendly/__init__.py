@@ -1,1 +1,1 @@
-MODULE_DESCRIPTION = "Old-fashioned friendliness"
+HIDDEN_MODULE_DESCRIPTION = "Old-fashioned friendliness"
