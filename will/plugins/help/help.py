@@ -24,3 +24,12 @@ class HelpPlugin(WillPlugin):
                         help_text += "<br/> %s" % line
 
         self.say(help_text, message=message, html=True)
+        self.say("""Or send me a photo in a private message.
+To control the slideshow you can use the keyboard:
+<ul>
+<li>Backspace to remove the current slide<li>
+<li>Left/right arrows to move forward and back</li>
+<li>Spacebar to pause and resume</li>
+</ul>""", message=message, html=True)
+
+
