@@ -66,6 +66,7 @@
     var SLIDESHOW;
     var SECONDS_PER_SLIDE = 4;
     var SECONDS_PER_NEW_SLIDE = 30;
+    var PAUSED = 'play';
 
     function addSlide(imgurl) {
         // Turn an img url into a workable slide.
@@ -163,6 +164,17 @@
         if (e.which === 39) {
             console.log("Right");
             $('#slideshow').cycle('next');
+        }
+        if (e.which === 32) { // spacebar
+            if (PAUSED == 'paused' ) {
+                console.log("Resumed");
+                $('#slideshow').cycle('resume').after().cycle('next');
+                PAUSED = 'resumed';
+            } else {
+                console.log("Paused");
+                $('#slideshow').cycle('pause');
+                PAUSED = 'paused';
+            }
         }
         if (e.which === 8) {
             console.log("Backspace");
