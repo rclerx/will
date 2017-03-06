@@ -15,7 +15,16 @@ class PhotoPlugin(WillPlugin):
 
     @respond_to("^http|: http")
     def pic(self, message):
-        """Send me a picture with: @max http://my.net/pic.jpg"""
+        """Send me a picture with: @max http://my.net/pic.jpg<br/>
+&nbsp;<br/>
+Or send me a photo in a private message.<br/>
+&nbsp;<br/>
+To control the slideshow you can use the keyboard:
+<ul>
+<li>Backspace to remove the current slide</li>
+<li>Left/right arrows to move forward and back</li>
+<li>Spacebar to pause and resume</li>
+</ul>"""
         pattern = re.compile("(http.*(jpg|png|gif))", re.IGNORECASE)
         matches = pattern.search(message['body'])
         if matches and matches.group():
