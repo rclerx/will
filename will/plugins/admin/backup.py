@@ -100,16 +100,19 @@ class BackupPlugin(WillPlugin):
     def restore_snapshot(self, message, snapshot):
         """Restore a particular backup with: restore _______"""
         self.say("""Okay, I'm going to restore from """ + snapshot, message=message)
-        s3 = self._s3()
-        s3object = s3.get_object(Bucket="max.bot", Key=snapshot)
-        body = s3object['Body']
+        try:
+            s3 = self._s3()
+            s3object = s3.get_object(Bucket="max.bot", Key=snapshot)
+            body = s3object['Body']
+            data = ""
+            for line in body.read():
+                data += line
+            pics = json.loads(data)
 
-        data = ""
-        for line in body.read():
-            data += line
-        pics = json.loads(data)
+            self.redis.delete("pics")
+            for index, pic in enumerate(pics):
+                self.redis.zadd("pics", pic, index)
+            self.say("""All set, I've restored from """ + snapshot, message=message)
+        except:
+            self.say("That didn't work. Are you sure there's a snapshot named {0}?".format(snapshot), message=message)
 
-        self.redis.delete("pics")
-        for index, pic in enumerate(pics):
-            self.redis.zadd("pics", pic, index)
-        self.say("""All set, I've restored from """ + snapshot, message=message)
