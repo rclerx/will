@@ -25,7 +25,7 @@ To control the slideshow you can use the keyboard:
 <li>Left/right arrows to move forward and back</li>
 <li>Spacebar to pause and resume</li>
 </ul>"""
-        pattern = re.compile("(http.*(jpg|png|gif))", re.IGNORECASE)
+        pattern = re.compile("(http.*(jpg|jpeg|png|gif))", re.IGNORECASE)
         matches = pattern.search(message['body'])
         if matches and matches.group():
             payload = {"image": matches.group()}
